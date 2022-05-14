@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,6 +36,9 @@ public class Produto implements Serializable {
 	joinColumns = @JoinColumn(name = "id_produto"), 
 	inverseJoinColumns = @JoinColumn(name = "id_categoria"))																																// produto_categoria
 	private List<Categoria> categorias = new ArrayList<Categoria>();
+	
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "produto")
+	private Estoque estoque;
 
 	public Produto() {
 

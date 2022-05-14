@@ -1,7 +1,6 @@
 package com.aps.bethstore.resources;
 
 import java.net.URI;
-import java.util.List;
 
 import javax.validation.Valid;
 
@@ -14,36 +13,38 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.aps.bethstore.domain.Produto;
-import com.aps.bethstore.services.ProdutoService;
+import com.aps.bethstore.domain.Estoque;
+import com.aps.bethstore.services.EstoqueService;
 
 import io.swagger.annotations.Api;
 
 @RestController
-@RequestMapping(value = "/produtos")
-@Api(value="API REST Produtos")
-public class ProdutoResource {
+@RequestMapping(value = "/estoque")
+@Api(value="API REST Estoque")
+public class EstoqueResource {
 
 	@Autowired
-	private ProdutoService service;
-	
-	@RequestMapping(value="/{id}",method=RequestMethod.GET)
-	public ResponseEntity<Produto> find(@PathVariable Integer id){
-		Produto obj = service.find(id);
+	private EstoqueService service;
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Estoque> find(@PathVariable Integer id) {
+		Estoque obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody Produto newObj) {
-		Produto obj = service.insert(newObj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdProduto()).toUri();
+	public ResponseEntity<Void> insert(@Valid @RequestBody Estoque newObj) {
+		Estoque obj = service.insert(newObj);
+		obj = service.insert(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdEstoque()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> update(@RequestBody Produto newObj, @PathVariable Integer id) {
-		newObj.setIdProduto(id);
-		service.update(newObj);
+	public ResponseEntity<Void> update(@RequestBody Estoque newObj, @PathVariable Integer id) {
+		Estoque obj = service.insert(newObj);
+		obj.setIdEstoque(id);
+		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
 	}
 	
@@ -53,9 +54,4 @@ public class ProdutoResource {
 		return ResponseEntity.noContent().build();
 	}
 
-	@RequestMapping(method=RequestMethod.GET)
-	public ResponseEntity<List<Produto>> findAll(){
-		List<Produto> list = service.findAll();
-		return ResponseEntity.ok().body(list);
-	}
 }
